@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustGym - Affiche PDF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: A3;
+            margin: 0;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+            .affiche {
+                box-shadow: none;
+                border-radius: 0;
+                page-break-after: avoid;
+            }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .affiche {
+            width: 297mm;
+            height: 420mm;
+            background: linear-gradient(135deg, #0a1428 0%, #1a2a4a 50%, #0d1f3d 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .affiche::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(91, 156, 245, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(91, 156, 245, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header {
+            position: relative;
+            z-index: 2;
+            padding: 40mm 30mm 20mm;
+            text-align: center;
+            border-bottom: 3px solid rgba(91, 156, 245, 0.3);
+        }
+
+        .logo {
+            font-size: 60px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #5b9cf5 0%, #a8d5ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10mm;
+            letter-spacing: 2px;
+        }
+
+        .tagline {
+            font-size: 18px;
+            color: #a8d5ff;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30mm;
+            padding: 35mm 30mm;
+            align-items: center;
+        }
+
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 20mm;
+        }
+
+        .main-text {
+            font-size: 42px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+            margin-bottom: 10mm;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #b0c4ff;
+            line-height: 1.6;
+            margin-bottom: 15mm;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12mm;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12mm;
+            padding: 10mm 12mm;
+            background: rgba(91, 156, 245, 0.08);
+            border-left: 4mm solid #5b9cf5;
+            border-radius: 8px;
+        }
+
+        .feature-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #5b9cf5 0%, #a8d5ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            font-size: 15px;
+            color: #d0d8ff;
+            font-weight: 500;
+        }
+
+        .preview-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone-mockup {
+            width: 100%;
+            aspect-ratio: 9 / 16;
+            background: linear-gradient(145deg, #1a3a5a, #0d1f3d);
+            border-radius: 40px;
+            padding: 15mm;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            border: 3px solid rgba(91, 156, 245, 0.4);
+        }
+
+        .phone-mockup::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 25px;
+            background: #0a1428;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a1428 0%, #1a2a4a 100%);
+            border-radius: 35px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 15mm;
+            gap: 12mm;
+        }
+
+        .screen-header {
+            text-align: center;
+            margin-bottom: 8mm;
+        }
+
+        .screen-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #5b9cf5;
+        }
+
+        .screen-subtitle {
+            font-size: 12px;
+            color: #a8d5ff;
+            margin-top: 2mm;
+        }
+
+        .screen-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8mm;
+        }
+
+        .card {
+            background: rgba(91, 156, 245, 0.1);
+            border: 1px solid rgba(91, 156, 245, 0.3);
+            border-radius: 12px;
+            padding: 12mm;
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 24px;
+            margin-bottom: 5mm;
+        }
+
+        .card-label {
+            font-size: 11px;
+            color: #d0d8ff;
+            font-weight: 600;
+        }
+
+        .cta {
+            position: relative;
+            z-index: 2;
+            padding: 25mm 30mm;
+            text-align: center;
+            border-top: 3px solid rgba(91, 156, 245, 0.3);
+            background: linear-gradient(90deg, rgba(91, 156, 245, 0.05) 0%, rgba(168, 213, 255, 0.05) 100%);
+        }
+
+        .cta-text {
+            font-size: 20px;
+            color: #ffffff;
+            margin-bottom: 15mm;
+            font-weight: 600;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20mm;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12mm 25mm;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #5b9cf5 0%, #3d7ad8 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(91, 156, 245, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #5b9cf5;
+            border: 2mm solid #5b9cf5;
+        }
+
+        .decoration {
+            position: absolute;
+            z-index: 1;
+        }
+
+        .decoration.top-right {
+            top: -50mm;
+            right: -50mm;
+            width: 200mm;
+            height: 200mm;
+            background: radial-gradient(circle, rgba(91, 156, 245, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .decoration.bottom-left {
+            bottom: -80mm;
+            left: -80mm;
+            width: 250mm;
+            height: 250mm;
+            background: radial-gradient(circle, rgba(91, 156, 245, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="affiche">
+        <!-- Decorative Shapes -->
+        <div class="decoration top-right"></div>
+        <div class="decoration bottom-left"></div>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🏋️ TRUSTGYM</div>
+            <div class="tagline">Gestion Intelligente de Votre Salle</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Left Side -->
+            <div class="features">
+                <div>
+                    <h2 class="main-text">Transformez la Gestion de Votre Salle</h2>
+                    <p class="subtitle">Avec TrustGym, gérez vos membres, coaches, stocks et finances en un seul endroit</p>
+                </div>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">👥</div>
+                        <div class="feature-text">Gestion des Membres & Abonnements</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🎯</div>
+                        <div class="feature-text">Suivi des Coaches & Séances</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-text">Historique d'Accès & Sécurité</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🛒</div>
+                        <div class="feature-text">Boutique & Gestion d'Inventaire</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💰</div>
+                        <div class="feature-text">Outils Financiers Avancés</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Phone Mockup -->
+            <div class="preview-section">
+                <div class="phone-mockup">
+                    <div class="screen">
+                        <div class="screen-header">
+                            <div class="screen-title">Gestion des Membres</div>
+                            <div class="screen-subtitle">8 actifs • 0 bloqués</div>
+                        </div>
+                        <div class="screen-cards">
+                            <div class="card">
+                                <div class="card-icon">👤</div>
+                                <div class="card-label">Utilisateurs</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-icon">📅</div>
+                                <div class="card-label">Abonnements</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-icon">🏆</div>
+                                <div class="card-label">Coachs</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-icon">📈</div>
+                                <div class="card-label">Statistiques</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta">
+            <div class="cta-text">Prêt à Révolutionner Votre Salle de Sport ?</div>
+            <div class="cta-buttons">
+                <button class="btn btn-primary">Démarrer Maintenant</button>
+                <button class="btn btn-secondary">En Savoir Plus</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-print when page loads
+        window.addEventListener('load', function() {
+            window.print();
+        });
+    </script>
+</body>
+</html>
